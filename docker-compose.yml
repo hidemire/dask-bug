@@ -13,7 +13,7 @@ services:
 
   worker1:
     image: ghcr.io/dask/dask:2024.1.0
-    command: ["dask-worker", "tcp://scheduler:8786", "--nthreads", "4"]
+    command: ["dask-worker", "tcp://scheduler:8786", "--nthreads", "2"]
     depends_on:
       - scheduler
     volumes:
@@ -21,7 +21,7 @@ services:
 
   worker2:
     image: ghcr.io/dask/dask:2024.1.0
-    command: ["dask-worker", "tcp://scheduler:8786", "--nthreads", "4"]
+    command: ["dask-worker", "tcp://scheduler:8786", "--nthreads", "2"]
     depends_on:
       - scheduler
     volumes:
@@ -35,5 +35,6 @@ services:
       - DASK_SCHEDULER_ADDRESS="tcp://scheduler:8786"
     volumes:
       - ./data:/data
+      - ./pyarrow-segfault.ipynb:/home/jovyan/pyarrow-segfault.ipynb
       - ./local-cluster.ipynb:/home/jovyan/local-cluster.ipynb
       - ./distributed.ipynb:/home/jovyan/distributed.ipynb
