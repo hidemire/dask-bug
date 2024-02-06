@@ -1,0 +1,39 @@
+version: "3.1"
+
+services:
+  scheduler:
+    image: ghcr.io/dask/dask:2024.1.0
+    hostname: scheduler
+    ports:
+      - "8786:8786"
+      - "8787:8787"
+    command: ["dask-scheduler"]
+    volumes:
+      - ./data:/data
+
+  worker1:
+    image: ghcr.io/dask/dask:2024.1.0
+    command: ["dask-worker", "tcp://scheduler:8786", "--nthreads", "4"]
+    depends_on:
+      - scheduler
+    volumes:
+      - ./data:/data
+
+  worker2:
+    image: ghcr.io/dask/dask:2024.1.0
+    command: ["dask-worker", "tcp://scheduler:8786", "--nthreads", "4"]
+    depends_on:
+      - scheduler
+    volumes:
+      - ./data:/data
+
+  notebook:
+    image: ghcr.io/dask/dask-notebook:2024.1.0
+    ports:
+      - "8888:8888"
+    environment:
+      - DASK_SCHEDULER_ADDRESS="tcp://scheduler:8786"
+    volumes:
+      - ./data:/data
+      - ./local-cluster.ipynb:/home/jovyan/local-cluster.ipynb
+      - ./distributed.ipynb:/home/jovyan/distributed.ipynb
